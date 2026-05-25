@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>兒童金融智力（FQ）性格測試</title>
+<style>
+    :root {
+        --primary-teal: #2A9D8F;
+        --secondary-gold: #E9C46A;
+        --accent-orange: #F4A261;
+        --bg-color: #F4F1DE;
+        --text-dark: #264653;
+        --card-bg: #FFFFFF;
+    }
+
+    body {
+        font-family: 'PingFang HK', 'Microsoft JhengHei', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-dark);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        background-color: var(--card-bg);
+        max-width: 600px;
+        width: 100%;
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(38, 70, 83, 0.08);
+        padding: 40px 30px;
+        text-align: center;
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* 頁面切換動畫 */
+    .page-section {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    .page-section.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 標題與文字 */
+    h1 {
+        color: var(--primary-teal);
+        font-size: 28px;
+        margin-bottom: 15px;
+    }
+    p {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    /* 按鈕設計 */
+    .btn {
+        background-color: var(--primary-teal);
+        color: white;
+        border: none;
+        padding: 16px 32px;
+        font-size: 18px;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        margin-top: 20px;
+        box-shadow: 0 4px 15px rgba(42, 157, 143, 0.3);
+    }
+    .btn:hover {
+        background-color: #21867a;
+        transform: translateY(-2px);
+    }
+
+    /* 測驗區塊 */
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #E0E0E0;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        background-color: var(--secondary-gold);
+        width: 0%;
+        transition: width 0.4s ease;
+    }
+    
+    .question-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        text-align: left;
+    }
+
+    .option-btn {
+        display: block;
+        width: 100%;
+        background-color: #F8F9FA;
+        border: 2px solid #E9ECEF;
+        color: var(--text-dark);
+        padding: 18px 20px;
+        margin-bottom: 15px;
+        border-radius: 16px;
+        font-size: 16px;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .option-btn:hover {
+        background-color: rgba(233, 196, 106, 0.15);
+        border-color: var(--secondary-gold);
+        transform: translateX(5px);
+    }
+
+    /* 結果區塊 */
+    .result-score {
+        font-size: 48px;
+        font-weight: bold;
+        color: var(--accent-orange);
+        margin: 20px 0;
+    }
+    .result-type {
+        font-size: 26px;
+        color: var(--primary-teal);
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    .result-analysis {
+        text-align: left;
+        background-color: #F8F9FA;
+        padding: 20px;
+        border-radius: 16px;
+        border-left: 5px solid var(--secondary-gold);
+        margin-bottom: 20px;
+    }
+    .result-analysis h4 {
+        margin: 15px 0 5px 0;
+        color: var(--primary-teal);
+    }
+    .result-analysis p {
+        margin: 0;
+        font-size: 15px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div id="landing-page" class="page-section active">
+        <div style="font-size: 60px; margin-bottom: 20px;">🌱🪙</div>
+        <h1>兒童金融智力（FQ）<br>性格測試</h1>
+        <p>想知道孩子的理財潛力與金錢價值觀嗎？<br>透過 7 條簡單的情境問題，為孩子找出他們的專屬「理財性格」，並獲取實用的財富管理建議！</p>
+        <button class="btn" onclick="startTest()">開始測試 🚀</button>
+    </div>
+
+    <div id="quiz-page" class="page-section">
+        <div class="progress-bar">
+            <div id="progress" class="progress-fill"></div>
+        </div>
+        <div style="text-align: left; color: #888; font-size: 14px; margin-bottom: 10px;" id="q-counter">問題 1 / 7</div>
+        <div id="question-text" class="question-title">問題載入中...</div>
+        <div id="options-container">
+            </div>
+    </div>
+
+    <div id="result-page" class="page-section">
+        <div style="font-size: 50px;" id="result-emoji">🎯</div>
+        <h2>測試完成！</h2>
+        <p>您的總分數為：</p>
+        <div class="result-score" id="final-score">0</div>
+        <div class="result-type" id="result-type-title">類型載入中...</div>
+        
+        <div class="result-analysis" id="result-content">
+            </div>
+        
+        <button class="btn" onclick="location.reload()">重新測試 🔄</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "1. 我對金錢的看法是：",
+            options: [
+                { text: "A. 金錢是很重要，沒有它就很難生活", score: 10 },
+                { text: "B. 我從不讓金錢影響我的選擇", score: 5 },
+                { text: "C. 我不需要想這個問題", score: 0 }
+            ]
+        },
+        {
+            q: "2. 若父母跟我討論零用錢的問題時，我的態度是：",
+            options: [
+                { text: "A. 從不理會父母的討論內容，只要給我足夠用就行了", score: 10 },
+                { text: "B. 若父母要求我對零用錢有所安排，我大多會順從", score: 5 },
+                { text: "C. 不想跟父母深入討論此問題，不如做「伸手派」，要用才問父母", score: 0 }
+            ]
+        },
+        {
+            q: "3. 當我消費的時候，我：",
+            options: [
+                { text: "A. 不會考慮其他預算開支，喜歡買便去買", score: 10 },
+                { text: "B. 只會覺得有需要便去購買", score: 5 },
+                { text: "C. 沒有所謂，不會想這是「需要」或「想要」", score: 0 }
+            ]
+        },
+        {
+            q: "4. 我想要買的東西超出預算自己心目中的金額時，我：",
+            options: [
+                { text: "A. 不理會是否負擔得起，買了再算", score: 10 },
+                { text: "B. 通常不會買，因為買了會令自己不安", score: 5 },
+                { text: "C. 從不會堅持去買，也沒有什麼主見，買不到也沒有問題", score: 0 }
+            ]
+        },
+        {
+            q: "5. 我對儲蓄的看法是：",
+            options: [
+                { text: "A. 我明白應該儲蓄，但沒有辦法儲蓄", score: 10 },
+                { text: "B. 我會將零用錢用來儲蓄，或計劃儲蓄來的錢買需要的物件", score: 5 },
+                { text: "C. 不重視儲蓄，就算儲蓄也沒有什麼儲蓄計劃", score: 0 }
+            ]
+        },
+        {
+            q: "6. 我對借錢的看法是：",
+            options: [
+                { text: "A. 若有需要，我會借錢，也不擔心沒辦法還錢", score: 10 },
+                { text: "B. 我盡可能不借錢，因為還錢很辛苦及不開心", score: 5 },
+                { text: "C. 從沒有需要向人借錢", score: 0 }
+            ]
+        },
+        {
+            q: "7. 對於送禮物給人，我的態度是：",
+            options: [
+                { text: "A. 若覺得想送就買，甚至會為自己多買一份", score: 10 },
+                { text: "B. 不會隨意送禮給別人，因為要考慮很多問題", score: 5 },
+                { text: "C. 從不覺得有送禮及收禮的需要", score: 0 }
+            ]
+        }
+    ];
+
+    const resultsData = [
+        {
+            min: 50, max: 70,
+            type: "物質型",
+            emoji: "💎",
+            analysis: `
+                <h4>🚀 追求動力</h4>
+                <p>這類孩子展現出極強的獲取慾望，對物質獎勵和實物回報反應靈敏，這種導向能激發他們早期追求成功的決心與競爭力。</p>
+                <h4>⚖️ 價值錯位</h4>
+                <p>由於過度關注金錢的購買力，他們容易將自我價值或人際關係與財富掛鉤，需要家長引導其理解友誼、誠信等無法量化的核心價值。</p>
+                <h4>👑 成就傾向</h4>
+                <p>他們具備成為優秀創業者的潛質，但在發展過程中必須學會區分「想要」與「需要」，避免陷入純粹的消費主義或物質攀比。</p>
+            `
+        },
+        {
+            min: 25, max: 49,
+            type: "靈性型",
+            emoji: "🕊️",
+            analysis: `
+                <h4>🧭 價值觀導向</h4>
+                <p>對金錢展現出較為淡泊的態度，更看重精神世界的富足與個人興趣的追求。</p>
+                <h4>🎨 消費行為特徵</h4>
+                <p>傾向於感性消費與隨性支出，對預算管理缺乏主動性，容易忽視金錢的工具屬性。</p>
+                <h4>📊 財富管理建議</h4>
+                <p>需加強基礎財務規劃意識，建立儲蓄與支出的邏輯框架，實現理想生活與物質基礎的平衡。</p>
+            `
+        },
+        {
+            min: 0, max: 24,
+            type: "休閒型",
+            emoji: "🛋️",
+            analysis: `
+                <h4>🤷 缺乏金錢觀念</h4>
+                <p>對財富的積累與支出缺乏基本的規劃意識，通常表現為隨性消費。</p>
+                <h4>📉 儲蓄動力不足</h4>
+                <p>傾向於當下享樂而非長期儲備，難以建立穩定的儲蓄習慣或財務目標。</p>
+                <h4>🤝 依賴性較強</h4>
+                <p>在財務決策上多依賴父母或他人，缺乏獨立管理零用錢的主動性。</p>
+            `
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let totalScore = 0;
+
+    function startTest() {
+        document.getElementById('landing-page').classList.remove('active');
+        document.getElementById('quiz-page').classList.add('active');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const qData = questions[currentQuestionIndex];
+        
+        // 修正了這裡的字串插值格式
+        document.getElementById('q-counter').innerText = "問題 " + (currentQuestionIndex + 1) + " / " + questions.length;
+        document.getElementById('question-text').innerText = qData.q;
+        
+        const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progress').style.width = progressPercent + "%";
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = ''; 
+
+        qData.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt.text;
+            btn.onclick = () => selectOption(opt.score);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectOption(score) {
+        totalScore += score;
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questions.length) {
+            renderQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-page').classList.remove('active');
+        document.getElementById('result-page').classList.add('active');
+        
+        document.getElementById('final-score').innerText = totalScore + " 分";
+
+        let result = resultsData.find(r => totalScore >= r.min && totalScore <= r.max);
+        
+        if(!result) result = resultsData[1]; 
+
+        document.getElementById('result-emoji').innerText = result.emoji;
+        document.getElementById('result-type-title').innerText = result.type;
+        document.getElementById('result-content').innerHTML = result.analysis;
+    }
+</script>
+
+</body>
+</html>
